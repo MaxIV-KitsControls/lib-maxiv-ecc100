@@ -9,7 +9,7 @@ BUFFER_SIZE = 1024
 LF = '\n'
 
 TEST_CTAG = 0x99
-
+TIME_DELAY = 0.25
 
 class ECC100():
 
@@ -37,15 +37,16 @@ class ECC100():
             print 'Connection failed'
             pass
 
-    def open(self, host, port):
-        self.sockect.connect((self.ECC100_HOST, self.ECC100_TCP_PORT))
+    def open(self):
+        self.socket.connect((self.ECC100_HOST, self.ECC100_TCP_PORT))
 
     def close(self):
         self.socket.close()
 
     def restart(self):
         self.close()
-        self.open()
+        time.sleep(0.1)
+        self.connect()
 
     def send(self, cmd):
         self.socket.send(cmd + LF)
@@ -83,12 +84,7 @@ class ECC100():
 
     def get_position(self, axis):
         resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_POSITION))
-        try:
-            data = ucprotocol.UcAckTelegram.unpack(resp)
-        except Exception as ex:
-            resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_POSITION))
-            data = ucprotocol.UcAckTelegram.unpack(resp)
-
+        data = ucprotocol.UcAckTelegram.unpack(resp)
         return float(data[6])  # unit nm
 
     def set_position(self, axis, position):
@@ -105,12 +101,7 @@ class ECC100():
 
     def axis_connected(self, axis):
         resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_CONNECTED))
-        try:
-            data = ucprotocol.UcAckTelegram.unpack(resp)
-        except:
-            resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_CONNECTED))
-            data = ucprotocol.UcAckTelegram.unpack(resp)
-
+        data = ucprotocol.UcAckTelegram.unpack(resp)
         return data[6]
 
     def get_moving_status(self, axis):
