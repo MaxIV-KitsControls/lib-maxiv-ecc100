@@ -99,6 +99,11 @@ class ECC100():
 
         return result  # check protocol  for error codes, 0: ok
 
+    def reset_position(self, axis):
+        resp = self.query(self.parse_set_telegram(axis, ecc100_protocol.ID_ECC_POSITION_RESET, 1))
+        data = ucprotocol.UcAckTelegram.unpack(resp)
+        return data[6]
+
     def axis_connected(self, axis):
         resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_CONNECTED))
         data = ucprotocol.UcAckTelegram.unpack(resp)
