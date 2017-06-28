@@ -45,6 +45,4 @@ controller.get_position(0)  	## 599.0
 
 ## Known issues
 
-* Some call generate a huge response by the server (far larger than the expected response size), that's why some methods repeat the call if there is any exeption. Same can be achieved by closing and reconnecting the socket.
 * One should not allow any call on a disconnected axis.
-* Still work in progress and changes here and here expected.
