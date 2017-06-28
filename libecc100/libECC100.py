@@ -18,7 +18,7 @@ class ECC100():
         self.ECC100_TCP_PORT = 2101
 
         self.connect()
-
+        self.disable_events()
         try:
             self.AXIS0_NAME = self.get_name(0).rstrip()
             self.AXIS1_NAME = self.get_name(1).rstrip()
@@ -76,6 +76,9 @@ class ECC100():
                                              axis,
                                              TEST_CTAG,
                                              value)
+    def disable_events(self):
+        resp = self.query(self.parse_set_telegram(0, ecc100_protocol.ID_ASYNC_EN, 0))
+        data = ucprotocol.UcAckTelegram.unpack(resp)
 
     def get_firmware(self):
         resp = self.query(self.parse_get_telegram(0, ecc100_protocol.ID_ECC_FIRMWARE_REV))
