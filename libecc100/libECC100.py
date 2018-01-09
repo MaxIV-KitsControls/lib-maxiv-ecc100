@@ -102,12 +102,12 @@ class ECC100():
 
         return result  # check protocol  for error codes, 0: ok
 
-    def get_reference_position(self, axis)
+    def get_reference_position(self, axis):
         resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_REFPOSITION))
         data = ucprotocol.UcAckTelegram.unpack(resp)
         return float(data[6])  # unit nm
 
-    def get_reference_position_valid(self, axis)
+    def get_reference_position_valid(self, axis):
         resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_REFPOS_VALID))
         data = ucprotocol.UcAckTelegram.unpack(resp)
         return data[6]
@@ -174,7 +174,12 @@ class ECC100():
             result = 1
 
         return result  # check protocol  for error codes, 0: ok
-    
+   
+    def timed_continous_backward(self, axis, time=0.1):
+        self.trigger_continous_backward(axis)
+        time.sleep(time)
+        self.trigger_continous_backward(axis, 0)
+
     def trigger_continous_forward(self, axis, cont=1):
         # if cont = 0, stops all movement of the axis regardless its direction.
         resp = self.query(self.parse_set_telegram(axis,
@@ -188,6 +193,11 @@ class ECC100():
 
         return result  # check protocol  for error codes, 0: ok
     
+    def timed_continous_forward(self, axis, time=0.1):
+        self.trigger_continous_forward(axis)
+        time.sleep(time)
+        self.trigger_continous_forward(axis, 0)
+
     def reset_position(self, axis):
         resp = self.query(self.parse_set_telegram(axis, ecc100_protocol.ID_ECC_POSITION_RESET, 1))
         data = ucprotocol.UcAckTelegram.unpack(resp)
