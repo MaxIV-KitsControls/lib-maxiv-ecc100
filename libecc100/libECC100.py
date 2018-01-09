@@ -102,6 +102,92 @@ class ECC100():
 
         return result  # check protocol  for error codes, 0: ok
 
+    def get_reference_position(self, axis)
+        resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_REFPOSITION))
+        data = ucprotocol.UcAckTelegram.unpack(resp)
+        return float(data[6])  # unit nm
+
+    def get_reference_position_valid(self, axis)
+        resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_REFPOS_VALID))
+        data = ucprotocol.UcAckTelegram.unpack(resp)
+        return data[6]
+    
+    def enable_movement(self, axis):
+        # Controls the approach of the actor to the target position. 1: enable approach, 0: Stop movement
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_MOVE_ABS,
+                                                  1))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+
+    def disable_movement(self, axis):
+        # Controls the approach of the actor to the target position. 1: enable approach, 0: Stop movement
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_MOVE_ABS,
+                                                  0))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+
+    def trigger_single_step_backward(self, axis):
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_SGL_STEP_BKWD,
+                                                  1))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+
+    def trigger_single_step_forward(self, axis):
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_SGL_STEP_FWD,
+                                                  1))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+    
+    def trigger_continous_backward(self, axis, cont=1):
+        # if cont = 0, stops all movement of the axis regardless its direction.
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_CONT_BKWD,
+                                                  cont))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+    
+    def trigger_continous_forward(self, axis, cont=1):
+        # if cont = 0, stops all movement of the axis regardless its direction.
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_CONT_FWD,
+                                                  cont))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+    
     def reset_position(self, axis):
         resp = self.query(self.parse_set_telegram(axis, ecc100_protocol.ID_ECC_POSITION_RESET, 1))
         data = ucprotocol.UcAckTelegram.unpack(resp)
@@ -124,6 +210,11 @@ class ECC100():
 
     def get_end_of_travel_backward(self, axis):
         resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_EOT_BKWD))
+        data = ucprotocol.UcAckTelegram.unpack(resp)
+        return data[6]
+
+    def get_on_target_status(self, axis):
+        resp = self.query(self.parse_get_telegram(axis, ecc100_protocol.ID_ECC_TARGET_STATUS))
         data = ucprotocol.UcAckTelegram.unpack(resp)
         return data[6]
 
