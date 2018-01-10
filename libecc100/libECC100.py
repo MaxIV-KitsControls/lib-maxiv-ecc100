@@ -175,10 +175,15 @@ class ECC100():
 
         return result  # check protocol  for error codes, 0: ok
    
-    def timed_continous_backward(self, axis, time=0.1):
+    def timed_continous_backward(self, axis, delay=0.1):
         self.trigger_continous_backward(axis)
-        time.sleep(time)
+        time.sleep(delay)
         self.trigger_continous_backward(axis, 0)
+
+    def timed_continous_forward(self, axis, delay=0.1):
+        self.trigger_continous_forward(axis)
+        time.sleep(delay)
+        self.trigger_continous_forward(axis, 0)
 
     def trigger_continous_forward(self, axis, cont=1):
         # if cont = 0, stops all movement of the axis regardless its direction.
@@ -193,11 +198,6 @@ class ECC100():
 
         return result  # check protocol  for error codes, 0: ok
     
-    def timed_continous_forward(self, axis, time=0.1):
-        self.trigger_continous_forward(axis)
-        time.sleep(time)
-        self.trigger_continous_forward(axis, 0)
-
     def reset_position(self, axis):
         resp = self.query(self.parse_set_telegram(axis, ecc100_protocol.ID_ECC_POSITION_RESET, 1))
         data = ucprotocol.UcAckTelegram.unpack(resp)
