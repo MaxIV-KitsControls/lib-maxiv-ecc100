@@ -28,6 +28,10 @@ class ECC100():
             self.AXIS1_NAME = ''
             self.AXIS2_NAME = ''
 
+	for axis in [0, 1, 2]:
+	    if self.axis_connected(axis):
+  		self.enable_output_relay(axis)
+
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -129,6 +133,32 @@ class ECC100():
         # Controls the approach of the actor to the target position. 1: enable approach, 0: Stop movement
         resp = self.query(self.parse_set_telegram(axis,
                                                   ecc100_protocol.ID_ECC_MOVE_ABS,
+                                                  0))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+
+    def enable_output_relay(self, axis):
+	# Controls the output relais of the selected axis. 1: on, 0: off
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_OUTPUT_EN,
+                                                  1))
+        try:
+            data = ucprotocol.UcAckTelegram.unpack(resp)
+            result = int(data[5])
+        except Exception as ex:
+            result = 1
+
+        return result  # check protocol  for error codes, 0: ok
+    
+    def disable_output_relay(self, axis):
+	# Controls the output relais of the selected axis. 1: on, 0: off
+        resp = self.query(self.parse_set_telegram(axis,
+                                                  ecc100_protocol.ID_ECC_OUTPUT_EN,
                                                   0))
         try:
             data = ucprotocol.UcAckTelegram.unpack(resp)
